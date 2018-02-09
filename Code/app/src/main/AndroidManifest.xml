@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="android.app.cryptogram">
+
+    <application
+        android:name="com.orm.SugarApp"
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="DATABASE"
+            android:value="cryptogram.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="3" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="android.app.cryptogram.domain" />
+
+        <activity
+            android:name="android.app.cryptogram.LoginActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="android.app.cryptogram.ChooseCryptogramActivity"
+            android:exported="true"
+            android:label="@string/title_activity_choose_cryptogram"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="android.app.cryptogram.ViewCryptogramActivity"
+            android:label="@string/title_activity_view_cryptogram"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="android.app.cryptogram.AdminActivity"
+            android:label="Admin Settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="android.app.cryptogram.PlayerActivity"
+            android:label="Main Menu"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="android.app.cryptogram.ViewRatingsActivity"
+            android:label="View Ratings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="android.app.cryptogram.CryptogramActivity"
+            android:label="Play Cryptogram"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>

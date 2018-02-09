@@ -1,0 +1,6 @@
+BRIEF DESCRIPTION:
+
+- The user can choose to log in as the administrator or as a specific player when starting the application.  For simplicity, authentication is optional.
+- The application allows players to (1) choose a cryptogram to solve, (2) solve cryptograms, (3) see previously solved cryptograms, and (4) view the list of player ratings.
+- The application allows the administrator to (1) add new cryptograms, and (2) add new local players.
+- The application maintains an underlying database to save persistent information across runs (e.g., cryptograms, players, solutions).
