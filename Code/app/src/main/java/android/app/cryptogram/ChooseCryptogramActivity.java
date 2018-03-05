@@ -52,6 +52,7 @@ public class ChooseCryptogramActivity extends AppCompatActivity implements Recyc
 
     }
 
+    /* Retrieve cryptograms from external web service and update local database if new cryptograms are available */
     private void retrieveData() {
         List<String[]> strings = ExternalWebService.getInstance().syncCryptogramService();
 
@@ -72,6 +73,7 @@ public class ChooseCryptogramActivity extends AppCompatActivity implements Recyc
 
     }
 
+    /* Handle list item selection (open the View Cryptogram page for the selected cryptogram) */
     @Override
     public void recyclerViewListClicked(View view, int position) {
         Log.i(TAG,"position="+position);

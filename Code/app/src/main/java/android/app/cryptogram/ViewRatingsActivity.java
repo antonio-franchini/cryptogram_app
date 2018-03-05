@@ -32,8 +32,8 @@ public class ViewRatingsActivity extends AppCompatActivity {
         ListView ratingsView = (ListView) findViewById(R.id.ratings_list);
         Iterator<Player> onePlayer = Player.findAll(Player.class);
         ArrayList<SimulatedRating> ratingsList = new ArrayList<>();
-        //ArrayList<SimulatedRating> ratingsListSorted = new ArrayList<>();
 
+        /* Iterate through all the players in the local database */
         while(onePlayer.hasNext()) {
             Player player = onePlayer.next();
             Iterator<CryptogramHistory> itr = CryptogramHistory.findAll(CryptogramHistory.class);
@@ -41,6 +41,7 @@ public class ViewRatingsActivity extends AppCompatActivity {
             int numStarted = 0;
             int numFailed = 0;
 
+            /* Iterate through all the cryptogram histories in the local database */
             while(itr.hasNext()) {
                 CryptogramHistory cryptogramHistory = itr.next();
                 if ((cryptogramHistory.getStatus() == CryptogramHistory.Status.IN_PROGRESS) && (cryptogramHistory.getPlayer().getUsername().equals(player.getUsername()))) {
@@ -52,6 +53,8 @@ public class ViewRatingsActivity extends AppCompatActivity {
                 }
             }
 
+            /* Update the external web service with the latest ratings that where stored in the local database */
+            /* Note that this may consist of updating the data of a single player, unless the the user created (and played with) more than one account */
             ExternalWebService.getInstance().updateRatingService(player.getUsername(), player.getFirstname(), player.getLastname(), numSolved, numStarted, numFailed);
 
         }
@@ -59,11 +62,13 @@ public class ViewRatingsActivity extends AppCompatActivity {
 
         List<ExternalWebService.PlayerRating> playerRatings = ExternalWebService.getInstance().syncRatingService();
 
+        /* Retrieve all ratings from web service and put it in an ArrayList */
         for (ExternalWebService.PlayerRating playerRating : playerRatings) {
             SimulatedRating rating = new SimulatedRating(playerRating.getFirstname(),playerRating.getLastname(),playerRating.getSolved(),playerRating.getStarted(),playerRating.getIncorrect());
             ratingsList.add(rating);
         }
 
+        /* Perform a Selelection Sort to order the ratings from the highest to the lowest */
         for (int a = 0; a < ratingsList.size(); a ++) {
             for (int b = a ; b < ratingsList.size(); b ++) {
                 if ((ratingsList.get(a).getSolved()) < (ratingsList.get(b).getSolved())) {
@@ -78,6 +83,7 @@ public class ViewRatingsActivity extends AppCompatActivity {
 
         }
 
+        /* Populate the widget ratingsView with the ordered ratings */
         RatingsAdapter adapter = new RatingsAdapter(this, R.layout.ratingslayout, ratingsList);
         ratingsView.setAdapter(adapter);
 

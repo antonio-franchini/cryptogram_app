@@ -35,26 +35,34 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.loginButton);
     }
 
+    /* Handle press of Login button */
     public void handleClick(View view) {
         boolean validInput = true;
 
+        /* Check that either the Admin or the Player radio button was selected */
         if (!admin.isChecked() && !player.isChecked()) {
             player.setError("Please choose Admin or Player");
             validInput = false;
-        } else {
+        }
+        else {
             player.setError(null);
         }
 
         if(player.isChecked()) {
+            /* Check that the player ID is not empty */
             if (TextUtils.isEmpty(userID.getText())) {
                 userID.setError("User ID can't empty");
                 validInput = false;
-            } else {
+            }
+            else {
                 String id = userID.getText().toString();
+                /* Check that the player ID is not too long */
                 if (id.length() > 10) {
                     userID.setError("Number of characters must less than 10");
                     validInput = false;
-                } else if (Player.find(Player.class, "username = ?", userID.getText().toString()).isEmpty()) {
+                }
+                /* Check that the player ID exists in the local database */
+                else if (Player.find(Player.class, "username = ?", userID.getText().toString()).isEmpty()) {
                     userID.setError("User ID not recognized.");
                     validInput = false;
                 }
@@ -62,9 +70,12 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (validInput) {
+            /* Input valid, go to admin activity */
             if (admin.isChecked()) {
                 goToAdminActivity(view);
-            } else if (player.isChecked()) {
+            }
+            /* Input valid, go to player activity (for selected player) */
+            else if (player.isChecked()) {
 
                 List<Player> players = Player.find(Player.class, "username = ?", userID.getText().toString());
                 PersistentData.currentPlayer = players.get(0);

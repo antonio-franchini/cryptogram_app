@@ -20,14 +20,9 @@ import android.app.cryptogram.R;
 
 import android.app.cryptogram.domain.CryptogramHistory;
 
-/******************************************************
- This is the cryptogram activity class
- ******************************************************/
 
 public class CryptogramActivity extends AppCompatActivity {
-    /******************************************************
-     Local variables
-     ******************************************************/
+
     Button submitButton;
     Button changeButton;
     CryptogramHistory cryptogramHistory;
@@ -43,37 +38,29 @@ public class CryptogramActivity extends AppCompatActivity {
     TextView statusField;
     private ExitActivityTransition transition;
 
-    /******************************************************
-     Entry function
-     ******************************************************/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cryptogram);
         transition = ActivityTransition.with(getIntent()).to(findViewById(R.id.activity_cryptogram)).start(savedInstanceState);
 
-        /******************************************************
-         Initialize spinners
-         ******************************************************/
+        /* Link Spinner objects to spinner widgets */
         fromSpinner = (Spinner) findViewById(R.id.fromSpinner);
         toSpinner = (Spinner) findViewById(R.id.toSpinner);
+
+        /* Populate spinners with alphabet array (that is defined in res/values/strings.xml) */
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.alpha_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fromSpinner.setAdapter(adapter);
         toSpinner.setAdapter(adapter);
 
-        /******************************************************
-         Get CryptogramHistory_id from intent
-         ******************************************************/
+        /* Get CryptogramHistory_id from intent (from calling page, ChooseCryptogramActivity)*/
+        /* Use CryptogramHistory_id to get the cryptogram history from the local database    */
         Intent intent = getIntent();
         final long cryptogramHistory_id = intent.getLongExtra("cryptogramHistory_id",-1);
-
         cryptogramHistory = CryptogramHistory.findById(CryptogramHistory.class, cryptogramHistory_id);
 
-
-        /******************************************************
-         Link objects to fields
-        ******************************************************/
+        /* Link objects to widgets */
         submitButton = (Button)findViewById(R.id.submitButton);
         changeButton = (Button)findViewById(R.id.changeButton);
         cryptogramID = (TextView)findViewById(R.id.cryptogramID);
@@ -83,9 +70,8 @@ public class CryptogramActivity extends AppCompatActivity {
         attempt      = (TextView)findViewById(R.id.attempt);
         cryptogram   = (TextView)findViewById(R.id.cryptogram);
 
-        /******************************************************
-         Initialize fields
-         ******************************************************/
+        /* Use the current cryptogram history to populate the various fileds in this page. */
+        /* These include cryptogram ID, status, attempt (as it was left off), etc.         */
         cryptogramID.setText("Cryptogram ID: " + cryptogramHistory.getCryptogram().getUid());
         timeField.setText(DateFormat.format("dd/MM/yy", cryptogramHistory.getDate()));
         dateField.setText(DateFormat.format("HH:mm:ss", cryptogramHistory.getDate()));
@@ -96,9 +82,7 @@ public class CryptogramActivity extends AppCompatActivity {
         attempt.setText(AttemptTestString);
         cryptogram.setText(CryptoTestString);
 
-        /******************************************************
-         Apply status specific settings
-         ******************************************************/
+        /* Apply status specific settings.  In particular, disable the spinners and the Submit button if this cryptogram was already solved or failed */
         if(cryptogramHistory.getStatus() == CryptogramHistory.Status.SOLVED || cryptogramHistory.getStatus() == CryptogramHistory.Status.FAILED){
             submitButton.setEnabled(false);
             changeButton.setEnabled(false);
@@ -113,15 +97,14 @@ public class CryptogramActivity extends AppCompatActivity {
         }
     }
 
-    /******************************************************
-     Respond to submit button
-     ******************************************************/
+    /* Handle buttons */
     public void checkClick(View view1){
         switch (view1.getId()){
+
+            /* Handle Submit button */
             case R.id.submitButton:
-                /***********************************************************
-                 Check is solution was right or wrong
-                 ***********************************************************/
+
+                /* Check if solution was right or wrong */
                 if(attempt.getText().toString().equals(cryptogramHistory.getCryptogram().getSolution())) {
                     cryptogramHistory.setStatus(CryptogramHistory.Status.SOLVED);
                     submitButton.setEnabled(false);
@@ -139,46 +122,47 @@ public class CryptogramActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Wrong solution!", Toast.LENGTH_SHORT).show();
                 }
                 statusField.setText("Status: " + cryptogramHistory.getStatus().getDesc());
-                /***********************************************************
-                 Check is solution was right or wrong
-                 ***********************************************************/
+
+                /* Save current attempt */
                 cryptogramHistory.setAttempt(attempt.getText().toString());
                 cryptogramHistory.save();
                 break;
 
+            /* Handle Go button, which will trigger the letter change as indicated by the From and To spinners */
             case R.id.changeButton:
-                /******************************************************
-                 Scan for upper case matches
-                 ******************************************************/
+
+                /* Scan cryptogram-string for upper case matches */
                 String fromChar = fromSpinner.getSelectedItem().toString().toUpperCase();
                 String toChar = toSpinner.getSelectedItem().toString().toUpperCase();
                 StringBuilder updatedStr = new StringBuilder(attempt.getText().toString());
 
                 Vector<Integer> indexes = new Vector<>();
                 indexes = findIndexes(fromChar);
+
+                /* Use the found indexes to replace occurrences of that letter in the attempt-string (keeping them uppercase) */
                 for(int i = 0; i < indexes.size(); i++) {
                     updatedStr.setCharAt(indexes.get(i), toChar.charAt(0));
                 }
                 attempt.setText(updatedStr);
 
-                /******************************************************
-                 Scan for lower case matches
-                 ******************************************************/
+                /* Scan cryptogram-string for lower case matches */
                 fromChar = fromSpinner.getSelectedItem().toString().toLowerCase();
                 toChar = toSpinner.getSelectedItem().toString().toLowerCase();
                 Vector<Integer> indexes2 = new Vector<>();
                 indexes2 = findIndexes(fromChar);
-                for(int i = 0; i < indexes2.size(); i++)
-                {
+
+                /* Use the found indexes to replace occurrences of that letter in the attempt-string (keeping them lowercase) */
+                for(int i = 0; i < indexes2.size(); i++) {
                     updatedStr.setCharAt(indexes2.get(i), toChar.charAt(0));
                 }
                 attempt.setText(updatedStr);
 
+                /* Display feedback message that indicates whether any occurence was found */
                 if(indexes.size() == 0 && indexes2.size() == 0) {
                     Toast.makeText(getApplicationContext(), "No match found", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                        Toast.makeText(getApplicationContext(), "Changed " + fromSpinner.getSelectedItem().toString() + " to " + toSpinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Changed " + fromSpinner.getSelectedItem().toString() + " to " + toSpinner.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
                 }
                 break;
 
@@ -187,9 +171,7 @@ public class CryptogramActivity extends AppCompatActivity {
         }
     }
 
-    /******************************************************
-     Respond to back button
-     ******************************************************/
+    /* Handle back button */
     public void onBackPressed() {
         Intent intent = new Intent(this, ViewCryptogramActivity.class);
         intent.putExtra("cryptogram_id", cryptogramHistory.getCryptogram().getId());
@@ -198,12 +180,9 @@ public class CryptogramActivity extends AppCompatActivity {
 
         setResult(RESULT_OK, intent);
         transition.exit(this);
-
     }
 
-    /******************************************************
-     Find indexes of character occurences
-     ******************************************************/
+    /* Finds indexes of given character in cryptogram string */
     public Vector<Integer> findIndexes(String fromChar) {
         Vector<Integer> indexes = new Vector<>();
         String temp = cryptogram.getText().toString();

@@ -59,8 +59,10 @@ public class ViewCryptogramActivity extends AppCompatActivity  implements Recycl
         fabViewCryptogram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /* Find the cryptogram in the local database using its ID */
                 Cryptogram cryptogram = Cryptogram.findById(Cryptogram.class, cryptogram_id);
 
+                /* Populate all the cryptogram information that will be passed on to the Cryptogram Activity page */
                 CryptogramHistory history = new CryptogramHistory();
                 history.setStatus(CryptogramHistory.Status.IN_PROGRESS);
                 history.setDate(new Date());
@@ -75,6 +77,7 @@ public class ViewCryptogramActivity extends AppCompatActivity  implements Recycl
 
     }
 
+    /* Handle list item selection (open the Cryptogram Activity page for this cryptogram) */
     @Override
     public void recyclerViewListClicked(View view, int position) {
         CryptogramHistory cryptogramHistory = adapter.getItem(position);

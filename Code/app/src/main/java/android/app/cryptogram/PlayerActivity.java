@@ -27,11 +27,14 @@ public class PlayerActivity extends AppCompatActivity {
         ranking = (Button) findViewById(R.id.viewRankingButton);
     }
 
+    /* Handle press of Choose Cryptogram button */
     public void goToCryptogramActivity(View view) {
         startActivity(view, ChooseCryptogramActivity.class);
     }
 
+    /* Handle press of View Rankings button */
     public void goToRankingActivity(View view) {
+
         startActivity(view, ViewRatingsActivity.class);
     }
 

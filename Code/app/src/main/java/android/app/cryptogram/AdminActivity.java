@@ -30,7 +30,7 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
         transition = ActivityTransition.with(getIntent()).to(findViewById(R.id.admin_activity)).start(savedInstanceState);
 
-
+        /* Set listener for Add Player button */
         Button btnAddPlayer = (Button) findViewById(R.id.btnAddPlayer);
         btnAddPlayer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +67,7 @@ public class AdminActivity extends AppCompatActivity {
                     }
                 }
 
-                /* Check First name validity */
+                /* Check first name validity */
                 if(edtFirstName.getText().toString().length() == 0){
                     edtFirstName.setError("Missing First name");
                 }
@@ -86,7 +86,7 @@ public class AdminActivity extends AppCompatActivity {
                     }
                 }
 
-                /* Check First name validity */
+                /* Check last name validity */
                 if(edtLastName.getText().toString().length() == 0){
                     edtLastName.setError("Missing Last name");
                 }
@@ -105,6 +105,7 @@ public class AdminActivity extends AppCompatActivity {
                     }
                 }
 
+                /* If player information is valid, add player to local database */
                 if (validUsername == true && validFirstname == true && validLastname == true) {
                     Player player = new Player(edtUsername.getText().toString(),
                             edtFirstName.getText().toString(),
@@ -116,6 +117,7 @@ public class AdminActivity extends AppCompatActivity {
         });
 
 
+        /* Set listener for Add Cryptogram button */
         Button btnAddCryptogram = (Button) findViewById(R.id.btnAddCryptogram);
         btnAddCryptogram.setOnClickListener(new View.OnClickListener() {
 
@@ -124,6 +126,7 @@ public class AdminActivity extends AppCompatActivity {
                 EditText edtEncoded = (EditText) findViewById(R.id.edtEncoded);
                 EditText edtSolution = (EditText) findViewById(R.id.edtSolution);
 
+                /* Check that both cryptogram and solution were provided and that they have the same length */
                 if(edtEncoded.getText().toString().length() == 0) {
                     edtEncoded.setError("Missing cryptogram");
                 }
@@ -135,6 +138,7 @@ public class AdminActivity extends AppCompatActivity {
                     cryptogram.setEncrypted(edtEncoded.getText().toString());
                     cryptogram.setSolution(edtSolution.getText().toString());
 
+                    /* Add new cryptogram to external web service */
                     try {
                         String uid = ExternalWebService.getInstance().addCryptogramService(cryptogram.getEncrypted(), cryptogram.getSolution());
                         cryptogram.setUid(uid);
