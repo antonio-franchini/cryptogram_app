@@ -1,1 +1,10 @@
-App built and tested on Nexus 5 api 19
+Target API:
+App built and tested on Nexus 5 API 19
+
+Usage of web service:
+In Admin Activity to add a cryptogram (encrypted and solution strings)
+In Choose Cryprogram Activity to get the list of all existing cryptograms
+In View Ratings Activity to add/update a rating (player name, # solved, # started, # incorrect)
+
+Usage of SugarRecord:
+Extended by Cryptogram, Player and CryptogramHistory classes
